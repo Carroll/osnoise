@@ -25,9 +25,8 @@ def do_thread(function):
     def wrapper(*args, **kwargs):
         t = threading.Thread(target=function, args=args, kwargs=kwargs)
         # Not daemonizing the thread makes publication slow. When try to
-        # publish too many messages, the rate will decrease eventually..
-        # JFP when a daemon, it will end the threads at the end of program exec, so make normal threads
-        t.daemon = False
+        # publish too much messages, the rate will decrease eventually..
+        t.daemon = True
         t.start()
     return wrapper
 
@@ -110,8 +109,7 @@ class Publisher(object):
 
     def _do_stop(self):
         self._run_event.clear()
-        # JFP not closing
-        #self._close_connection()
+        self._close_connection()
 
 
     def _close_connection(self):
@@ -127,3 +125,4 @@ class Publisher(object):
             #self.connection.close(reply_code=200, reply_text='Normal shutdown')
         else:
             LOG.debug('Connection is already closed..')
+        LOG.info('Connection to RabbitMQ is closed..')

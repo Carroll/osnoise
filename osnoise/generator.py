@@ -23,6 +23,11 @@ import osnoise.conf.opts as opts
 import threading
 import time
 import uuid
+# JFP #
+import osnoise.common.listq as listq
+import pdb
+
+MAXTHREADS = 20
 
 class OSNoise(object):
     """This class inits and runs OSNoise."""
@@ -42,27 +47,41 @@ class OSNoise(object):
             LOG = logging.getLogger(__name__)
             LOG.info('Start OSNoise..')
 
-            # init messaging config
-            msg = messaging.BasicMessaging(conf)
 
-            # init publisher and start publish
-            pub = publisher.Publisher(pub_id=uuid.uuid4(),
-                                      duration=msg.get_duration(),
-                                      publish_rate=msg.get_publish_rate(),
-                                      connection=msg.get_connection(),
-                                      channel=msg.get_channel(),
-                                      exchange=msg.get_exchange(),
-                                      routing_key=msg.get_routing_key(),
-                                      body=msg.get_message_body(),
-                                      properties=msg.get_message_properties()
-                                      )
+            exc = listq.ReplyExchanges()
+            for replyExchange in exc.listQueues():
+               # init publisher and start publish
+               # JFP get reply and routing-keys
+               LOG.info('Exchange %s',replyExchange)
+               # init messaging config
+               msg = messaging.BasicMessaging(conf)
+               pdb.set_trace()
+               comp = msg.get_exchange()
+               pub = publisher.Publisher(pub_id=uuid.uuid4(),
+                                         duration=msg.get_duration(),
+                                         publish_rate=msg.get_publish_rate(),
+                                         connection=msg.get_connection(),
+                                         channel=msg.get_channel(),
+                                         # JFP send on all replyExchanges
+                                         #exchange=msg.get_exchange(),
+                                         #routing_key=msg.get_routing_key(),
+                                         exchange=replyExchange,
+                                         routing_key=replyExchange,
+                                     
+                                         body=msg.get_message_body(),
+                                         properties=msg.get_message_properties()
+                                         )
 
-            # start publishing
-            pub.do_publish()
+               # start publishing
+               pub.do_publish()
 
-            while threading.activeCount() != 0:
-                time.sleep(0.1)
-                pass
+               # JFP go behind 1
+               while threading.activeCount() > MAXTHREADS:
+                   time.sleep(0.1)
+                   pass
+            # in case of daemon threads so that they do not stop when main program exits
+            #time.sleep(msg.get_duration())
+
         except KeyboardInterrupt:
             LOG.warning('Program interrupted by user..')
             LOG.info('Stopping..')

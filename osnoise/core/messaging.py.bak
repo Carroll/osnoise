@@ -25,9 +25,6 @@ import osnoise.conf
 CONF = osnoise.conf.CONF
 LOG = logging.getLogger(__name__)
 
-def on_open(connection):
-    connection.channel(on_channel_open)
-
 
 class BasicMessaging(object):
     """Configures a rabbitmq client to publish dummy messages"""
@@ -112,7 +109,6 @@ class BasicMessaging(object):
             locale=self.pika_locale
         )
         self.connection = pika.BlockingConnection(parameters=parameters)
-        #self.connection = pika.SelectConnection(parameters=parameters, on_open_callback=on_open)
         self.channel = self.connection.channel()
         self.channel.confirm_delivery()
         # self.channel.basic_qos(prefetch_size=0,

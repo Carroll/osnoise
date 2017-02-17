@@ -37,12 +37,12 @@ base_options = [
     cfg.IntOpt(
         'log_maxBytes',
         default=1000000,
-        min=1000,
+        #min=1000,
         help='Log level.'),
     cfg.IntOpt(
         'log_backupCount',
         default=5,
-        min=1,
+        #min=1,
         help='Log level.'),
     cfg.BoolOpt('log_config_append',
                 default=False,
