@@ -82,13 +82,16 @@ class Publisher(object):
         message_count = 0
 
         try:
-            while (self._run_event.is_set() and
-                       (self.duration == 0 or current_time < start_time +
+            while ( (self.duration == 0 or current_time < start_time +
                                self.duration*1000)):
+
+#JFP 27/02/2017            while (self._run_event.is_set() and
+ #                      (self.duration == 0 or current_time < start_time +
+  #                             self.duration*1000)):
                 #keep up with the publish rate
                 #JFP
-		#self._delay_publish(message_count=message_count,
-                                    #interval=interval)
+		self._delay_publish(message_count=message_count,
+                                    interval=interval)
                 #publish a message
                 self.channel.basic_publish(exchange=self.exchange_name,
                                            routing_key=self.routing_key,
@@ -97,8 +100,10 @@ class Publisher(object):
                                            )
                 message_count += 1
                 current_time = int(round(time.time() * 1000))
-                LOG.debug('[message %s] Published to: %s' %(message_count,
-                                                            self.exchange_name))
+                #JFP
+                #LOG.debug('[message %s] Published to: %s' %(message_count,
+                #                                            self.exchange_name))
+                #JFP
             LOG.info('Total messages %s' %(message_count-1))
             self._do_stop()
         except IOError as ex:

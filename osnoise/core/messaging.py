@@ -114,7 +114,9 @@ class BasicMessaging(object):
         self.connection = pika.BlockingConnection(parameters=parameters)
         #self.connection = pika.SelectConnection(parameters=parameters, on_open_callback=on_open)
         self.channel = self.connection.channel()
-        self.channel.confirm_delivery()
+        # JFP 27/02/2017
+        # self.channel.confirm_delivery()
+        # JFP 27/02/2017
         # self.channel.basic_qos(prefetch_size=0,
         #                        prefetch_count=0,
         #                        all_channels=False

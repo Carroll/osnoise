@@ -55,7 +55,7 @@ class OSNoise(object):
                LOG.info('Exchange %s',replyExchange)
                # init messaging config
                msg = messaging.BasicMessaging(conf)
-               pdb.set_trace()
+               #pdb.set_trace()
                comp = msg.get_exchange()
                pub = publisher.Publisher(pub_id=uuid.uuid4(),
                                          duration=msg.get_duration(),
